@@ -1,0 +1,20 @@
+html {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-image: url("fon_pyatna_temnyy_91678_1920x1080.jpg");
+}
+
+#root {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
