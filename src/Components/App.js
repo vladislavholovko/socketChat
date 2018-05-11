@@ -10,6 +10,7 @@ class App extends React.Component {
     super();
     this.state = {
       connect: false,
+      addPeople: "",
       nickname: "",
       message: "",
       onlineList: [],
@@ -24,12 +25,23 @@ class App extends React.Component {
       socket.on('online', list => {
         this.setState({onlineList: list});
       });
-      socket.on('connected', nickname => console.log('connected', nickname));
-      socket.on('disconnected', nickname => console.log('disconnected', nickname));
+      socket.on('connected', nickname => {
+        let mas = this.state.allMessage;
+        let users = {nickname: "User " + nickname + " connected"};
+        mas.push(users)
+        this.setState({allMessage: mas});
+      });
+      socket.on('disconnected', nickname => {
+        let mas = this.state.allMessage;
+        let users = {nickname: "User " + nickname + " disconnect"};
+        mas.push(users)
+        this.setState({allMessage: mas});
+      });
       socket.on('message', message => {
         let mas = this.state.allMessage;
         mas.push(message);
-        this.setState({allMessage: mas})
+        this.setState({allMessage: mas});
+        document.getElementById('mes').scroll(0, document.getElementById('mes').scrollHeight);
       })
     });
   };
@@ -51,7 +63,7 @@ class App extends React.Component {
     console.log(this.state.allMessage);
   };
 
-  exit(){
+  exit() {
     // this.setState({connect: false, nickname: "" })
     alert("You shall not pass!")
   };
@@ -86,21 +98,26 @@ class App extends React.Component {
               <div className={css(styles.logoName)}>{this.state.nickname}</div>
             </div>
             <div className={css(styles.logoExit)}>
-              <div onClick={()=>this.exit()}>Exit</div>
+              <div onClick={() => this.exit()}>Exit</div>
             </div>
           </div>
           {/*-----*/}
           <div className={css(styles.massageChat)}>
             <div className={css(styles.messageBody)}>
               <b>CHAT</b>
-              <div>
+              <div id="mes">
                 {message}
+                {this.state.addPeople !== "" ?
+                  <div className={css(styles.connectedUsers)}>User: {this.state.addPeople} connected</div> :
+                  <div></div>}
               </div>
             </div>
             <div className={css(styles.onlineUsers)}>
               <b>Online Users</b>
               <div>
-                {this.state.onlineList.map((value, index) => <div key={index}><div></div> <b>{value}</b></div>)}
+                {this.state.onlineList.map((value, index) => <div key={index}>
+                  <div></div>
+                  <b>{value}</b></div>)}
               </div>
             </div>
           </div>
@@ -184,45 +201,45 @@ const styles = StyleSheet.create({
   //---
   logo: {
     width: '100%',
-    height:'100px',
+    height: '100px',
     display: 'flex',
-    alignItems:'center',
+    alignItems: 'center',
   },
-  logoInfo:{
+  logoInfo: {
     display: 'flex',
-    justifyContent:'flex-start',
+    justifyContent: 'flex-start',
     flex: '1',
-    margin:'10px 10px'
+    margin: '10px 10px'
   },
-  logoImage:{
+  logoImage: {
     width: '75px',
-    height:'75px',
+    height: '75px',
     border: '3px solid #000',
-    borderRadius:'40px',
-    backgroundColor:'rgba(206,206,206,0.5)',
-    ':hover':{
-      boxShadow:'2px 2px 2px #000',
-      marginBottom:'2px',
-      backgroundColor:'rgba(206,206,206,0.8)',
+    borderRadius: '40px',
+    backgroundColor: 'rgba(206,206,206,0.5)',
+    ':hover': {
+      boxShadow: '2px 2px 2px #000',
+      marginBottom: '2px',
+      backgroundColor: 'rgba(206,206,206,0.8)',
       cursor: 'pointer'
     }
   },
-  logoName:{
+  logoName: {
     display: 'flex',
     alignItems: 'center',
     margin: '0 10px',
-    font:'30px Permanent Marker',
+    font: '30px Permanent Marker',
 
   },
-  logoExit:{
+  logoExit: {
     display: 'flex',
-    justifyContent:'flex-end',
-    margin:'10px 20px',
-    ':nth-child(1n) > div':{
-      font:'25px Concert One',
-      ':hover':{
-        cursor:'pointer',
-        textShadow:' 2px 2px 5px #000'
+    justifyContent: 'flex-end',
+    margin: '10px 20px',
+    ':nth-child(1n) > div': {
+      font: '25px Concert One',
+      ':hover': {
+        cursor: 'pointer',
+        textShadow: ' 2px 2px 5px #000'
       }
     }
   },
@@ -230,32 +247,32 @@ const styles = StyleSheet.create({
   massageChat: {
     width: '100%',
     display: 'flex',
-    flex:'1',
+    flex: '1',
   },
-  messageBody:{
-    flex:'1',
+  messageBody: {
+    flex: '1',
     margin: '20px 10px',
     border: '2px solid rgba(252, 191, 191, 0.7)',
-    borderRadius:'7px',
+    borderRadius: '7px',
     backgroundColor: 'rgba(255, 198, 198, 0.3)',
-    display:'flex',
-    flexDirection:'column',
-    alignItems:'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     ':nth-child(1n) > b': {
-      font:'25px Concert One',
+      font: '25px Concert One',
       // margin:'5px 0'
     },
     ':nth-child(1n) > div': {
       width: '100%',
-      display:'flex',
-      flexDirection:'column',
-      alignItems:'space-between',
-      overflowY:'auto'
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'space-between',
+      overflowY: 'auto'
     }
   },
   line: {
     width: '100%',
-    minHeight:'25px',
+    minHeight: '25px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -263,49 +280,49 @@ const styles = StyleSheet.create({
   },
   name: {
     padding: '0 15px',
-    font: '20px Pacifico'
+    font: '20px Concert One',
   },
   message: {
     flex: '1',
-    font: '20px Caveat'
+    font: '24px Caveat'
   },
   date: {
     padding: '0 10px',
-    font:'15px Concert One',
+    font: '15px Concert One',
   },
   //---
   onlineUsers: {
     width: '300px',
     display: 'flex',
-    flexDirection:'column',
+    flexDirection: 'column',
     alignItems: 'center',
     border: '2px solid rgba(252, 191, 191, 0.7)',
-    borderRadius:'7px',
+    borderRadius: '7px',
     backgroundColor: 'rgba(255, 198, 198, 0.3)',
     margin: '20px 10px',
-    font:'25px Concert One',
-    ':nth-child(1n)>div':{
-      width:'100%',
-      fontFamily:'Caveat',
-      display:'flex',
-      flexDirection:'column',
-      alignItems:'flex-start',
-      overflowY:'auto',
+    font: '25px Concert One',
+    ':nth-child(1n)>div': {
+      width: '100%',
+      fontFamily: 'Caveat',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      overflowY: 'auto',
       ':nth-child(1n) > div': {
-        minHeight:'32px',
-        display:'flex',
+        minHeight: '32px',
+        display: 'flex',
         margin: '5px 5px',
         ':nth-child(1n) > div': {
           width: '25px',
-          height:'25px',
+          height: '25px',
           border: '1px solid #000',
-          borderRadius:'25px',
-          backgroundColor:'rgba(206,206,206,0.5)',
-          margin:'0 5px',
-          ':hover':{
-            boxShadow:'2px 2px 2px #000',
-            marginBottom:'2px',
-            backgroundColor:'rgba(206,206,206,0.8)',
+          borderRadius: '25px',
+          backgroundColor: 'rgba(206,206,206,0.5)',
+          margin: '0 5px',
+          ':hover': {
+            boxShadow: '2px 2px 2px #000',
+            marginBottom: '2px',
+            backgroundColor: 'rgba(206,206,206,0.8)',
             cursor: 'pointer'
           }
         }
@@ -315,7 +332,7 @@ const styles = StyleSheet.create({
   //---
   massageInput: {
     width: '100%',
-    height:'100px',
+    height: '100px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -323,7 +340,7 @@ const styles = StyleSheet.create({
       flex: '1',
       height: '70px',
       margin: ' 0 5px 0 10px',
-      padding:'0 10px',
+      padding: '0 10px',
       border: '1px solid rgb(244, 179, 66)',
       borderRadius: '5px',
       fontFamily: 'Skranji',
@@ -338,7 +355,7 @@ const styles = StyleSheet.create({
     ':nth-child(1n) > button': {
       height: '60px',
       margin: ' 0 10px 0 5px',
-      width:'100px',
+      width: '100px',
       outline: 'none',
       border: '1px solid #000',
       borderRadius: '5px',
@@ -351,6 +368,5 @@ const styles = StyleSheet.create({
       },
     },
   },
-
 });
 export default App;
